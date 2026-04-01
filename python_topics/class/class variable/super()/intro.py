@@ -8,6 +8,8 @@
 
 # if a child and a parent have a method with the same name the child's method is taken 
 
+
+# if there are two parent class and super() is called it will call both class's method
 class shapes : 
     def __init__(self , color , filled) : 
         self.color = color 
