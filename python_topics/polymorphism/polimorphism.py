@@ -7,7 +7,7 @@
 
 from abc import ABC , abstractmethod
 
-class Shape(ABC) : #ABC doesnt allow shape to run directly . it can only be called in child class and not just by shape()
+class Shape(ABC) : #ABC doesnt allow shape to run directly . it can only be called in child class and not just by shape() (ABC works only when there is abstractmethod inside the class too. Otherwise we can call the class directl)
     @abstractmethod # it checks that all child class has area method in them 
     # abstractmethod applies only to the only one  method mentioned just below it 
     def area(self) :
