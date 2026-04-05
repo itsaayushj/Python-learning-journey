@@ -8,7 +8,7 @@ class zoo :
         self.species = species
 
     def about_it(self) : # this is a instance method as it works on a instance(object) It uses self parameters
-        return f"The name of the animal is{self.name} and it is a {self.species}" 
+        return f"The name of the animal is {self.name} and it is a {self.species}" 
     
 
 animal1 = zoo("nemo" , "fish")
