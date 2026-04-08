@@ -4,7 +4,6 @@ def repeater(number) :
         def wrapper(*args) : 
             for num in range(number) : 
                 result =function(*args)
-            
             return result
         return wrapper
     return starter
