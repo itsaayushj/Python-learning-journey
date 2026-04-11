@@ -8,6 +8,9 @@ with open(file_path , "r") as file  :
     for line in reader : 
         print(line[0])
         
+    for line in reader : #it wont run twice, we have to turn reader into list to make it run twice.It can be looped only once
+        print(line)
+        
 
 
 
