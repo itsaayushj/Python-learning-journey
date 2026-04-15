@@ -13,7 +13,7 @@ def main() :
     app = QApplication(sys.argv)# arg stands for arguments//helps to access command line arguments intended for it 
     window  = MainWindow() #creates the window abject
     window.show() # to show the window // it will be shown for a small time 
-    sys.exit(app.exec_()) # to keep the window running
+    sys.exit(app.exec_()) # to keep the window running // exec = execute
 
 
 
