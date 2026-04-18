@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
                              "font-style : italic;"
                              "text-decoration : underline")
         label1.setAlignment(Qt.AlignBottom | Qt.AlignHCenter)
-        label2 = QLabel (self)
+        label2 = QLabel(self)
         label2.setGeometry(0 , 100 , 400 , 400)
         
         pixmap = QPixmap("pyqt5_gui\\gui_icon.jpeg")
