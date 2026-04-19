@@ -10,13 +10,13 @@ class MainWindow(QMainWindow) :
         self.initui()
 
     def initui(self):
-        central_widget = QWidget() # making it a normal widget first
-        self.setCentralWidget(central_widget)
-        label1 = QLabel("#1" , self)
-        label2 = QLabel("#2" , self)        
-        label3 = QLabel("#3" , self)
-        label4 = QLabel("#4" , self)
-        label5 = QLabel("#5" , self)
+        central_widget = QWidget() # making it a widget first
+        self.setCentralWidget(central_widget) # turning it into central widget , central widget = main content of window
+        label1 = QLabel("#1" ) # we wont add self here because then it will be assigned to Mainwindow but we want it to be assigned to central widget so we will let it assign the correct parent automatically
+        label2 = QLabel("#2" ) # when adding layout then no self, unless setting something manually. eg - move, setGeometry
+        label3 = QLabel("#3" )
+        label4 = QLabel("#4" )
+        label5 = QLabel("#5" )
         label1.setStyleSheet("color: red;"
                              "background-color: yellow")
         label2.setStyleSheet("color: blue;"
@@ -30,7 +30,7 @@ class MainWindow(QMainWindow) :
 
         grid = QGridLayout() # calling the constructor
         central_widget.setLayout(grid) # SETTING THE LAYOUT
-        grid.addWidget(label1 , 0 , 0) # for v and h layout no numbers are needed 
+        grid.addWidget(label1 , 0 , 0) # for v and h layout no numbers are needed but order matters 
         grid.addWidget(label2 , 0 , 1) # the numbers are used as tables (rows , cols)
         grid.addWidget(label3 , 1, 0)
         grid.addWidget(label4 , 1 , 1)
@@ -46,4 +46,3 @@ if __name__ == "__main__":
     main()
 
 
-# // fix this later //
