@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
         print("Clicked!")
         self.button.setDisabled(True)
         self.label1.setText("Clicked!")
+        self.button.setText("clicked!")
 def main():
     app = QApplication(sys.argv)
     window = MainWindow()
