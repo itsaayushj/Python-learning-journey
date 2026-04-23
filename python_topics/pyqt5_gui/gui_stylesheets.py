@@ -17,14 +17,40 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.button1)
         layout.addWidget(self.button2)
         layout.addWidget(self.button3)
+        # Qt needs its own naming system. We can use this name in stylesheet
+        self.button1.setObjectName("button1")
+        self.button2.setObjectName("button2")
+        self.button3.setObjectName("button3")
         self.setStyleSheet("""
             QPushButton{
                            font-size: 40px;
                            font-family: Arial;
-                           padding: 50px 100px;
-                           } 
+                           padding: 10px 50px;  
+                           margin: 20px;
+                           border: 3px solid;
+                           border-radius: 15px;
+                           
+                        } 
+            QPushButton#button1{
+                            background-color: hsl(353, 86%, 57%);
+                        }
+            QPushButton#button2{
+                            background-color: hsl(115, 54%, 56%);
+                        }
+            QPushButton#button3{
+                            background-color: hsl(267, 84%, 61%);
+                        }
+             QPushButton#button1:hover{
+                            background-color: hsl(353, 86%, 77%); 
+                        }
+            QPushButton#button2:hover{
+                            background-color: hsl(115, 54%, 76%);
+                        }
+            QPushButton#button3:hover{
+                            background-color: hsl(267, 84%, 81%);
+                        }
                             """) # bigger string so we used triple quotes """
-
+ #increasing the brightness when hover..thatswhy i used hsl over hex
 
 
 def main():
