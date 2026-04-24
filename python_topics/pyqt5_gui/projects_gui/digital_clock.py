@@ -26,7 +26,7 @@ class MainWindow(QMainWindow):
         layout1.addWidget(self.label ,alignment=(Qt.AlignCenter))
 
         self.label.setStyleSheet("color: #007c00;")
-        self.label.setFont(QFont("Consolas" , 60))
+        self.label.setFont(QFont("Consolas" , 70))
         self.label.setAlignment(Qt.AlignCenter)
     def update_time(self):
         current_time = datetime.datetime.now().strftime("%H:%M:%S")
