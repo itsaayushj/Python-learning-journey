@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
                            }
                            QPushButton:disabled {
                            color: white;
-                           background-color: grey;
+                           background-color: #121212;
                            }
                            QPushButton:hover {
                            font-size: 145px;
