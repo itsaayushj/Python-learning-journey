@@ -27,7 +27,7 @@ class digital_clock(QWidget): # insted of Qmainwindow we used Qwidget as it is m
         font_family = QFontDatabase.applicationFontFamilies(font_id)[0] #calling the 1st font in font family. this returns the font name
         myfont = QFont(font_family , 100)  # font size 
         self.time_label.setFont(myfont)
-
+        
         self.timer.start(1000)
         self.timer.timeout.connect(self.update_time)
         self.update_time()
