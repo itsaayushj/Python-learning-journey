@@ -48,19 +48,21 @@ class stopwatch(QWidget):
         self.reset_button.clicked.connect(self.reset_slot)
         self.timer.timeout.connect(self.update_display)
     def start_slot(self):
-        self.timer.start(100) # interval of timeout every 10 ms
+        self.timer.start(10) # interval of timeout every 10 ms
     def stop_slot(self):
         self.timer.stop()
     def reset_slot(self):
-        print("reset")
+        self.time = QTime(0 , 0 , 0 ,0) #reseting the time
+        self.time_display.setText(self.format_time(self.time))
+        self.timer.stop()
     def format_time(self , time):
         hours = time.hour()
         minutes = time.minute()
         seconds = time.second()
-        milliseconds = time.msec()
-        return f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:03}" # :02 to add 00 infront of them by default
+        milliseconds = time.msec() // 10 # to get 2 digit ms not 3 digit default 
+        return f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:02}" # :02 to add 00 infront of them by default
     def update_display(self):
-        self.time = self.time.addMSecs(100) # to add 10ms in time 
+        self.time = self.time.addMSecs(10) # to add 10ms in time 
         self.time_display.setText(self.format_time(self.time))
 def main():
     app = QApplication(sys.argv)
