@@ -133,9 +133,7 @@ class MainWidget(QWidget):
             for x in self.flags:
                 flag_num2 += 1 
                 current_text += (f"Flag {flag_num2:02} - {x} \n")
-            for i in self.flags:
-                flag_num += 1 
-                self.flag_display.setText(current_text + f"Flag {flag_num:02} - {i} \n")
+            self.flag_display.setText(current_text)
                 
 
 
