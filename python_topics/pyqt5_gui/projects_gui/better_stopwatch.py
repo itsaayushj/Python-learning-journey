@@ -100,6 +100,7 @@ class MainWidget(QWidget):
         self.pause_time_label.setText(" Total pause time - 00:00:00.00")
         self.flag_button.setEnabled(False)
         self.flags.clear()
+        self.flag_display.setText("")
     def time_format(self , time):
         hours = time.hour()
         minutes = time.minute()
@@ -119,17 +120,23 @@ class MainWidget(QWidget):
         second = (total_msec % 60000) // 1000
         millisecond = (total_msec % 1000) // 10 
         return f"{hour:02}:{minute:02}:{second:02}.{millisecond:02}"
-    def flag_button_slot(self):
-        
+    def flag_button_slot(self):   
         if not self.time == QTime(0 , 0 , 0 , 0):
             current_flags =self.time_format(self.time)
             self.flags.append(current_flags)
-            print("Your flags are - " , end=" ")
-            print(self.flags)
-            for num in range(len(self.flags)):
-                for i in self.flags:
-                    print(f"flag {num} - {i}")
-
+           # print("Your flags are - " , end=" ")
+            # print(self.flags)
+            flag_num = 0
+            # current_text = self.flag_display.text()
+            current_text = ""
+            flag_num2 = 0
+            for x in self.flags:
+                flag_num2 += 1 
+                current_text += (f"Flag {flag_num2:02} - {x} \n")
+            for i in self.flags:
+                flag_num += 1 
+                self.flag_display.setText(current_text + f"Flag {flag_num:02} - {i} \n")
+                
 
 
 
