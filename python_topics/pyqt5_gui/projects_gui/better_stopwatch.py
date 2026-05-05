@@ -126,7 +126,7 @@ class MainWidget(QWidget):
             self.flags.append(current_flags)
            # print("Your flags are - " , end=" ")
             # print(self.flags)
-            flag_num = 0
+            
             # current_text = self.flag_display.text()
             current_text = ""
             flag_num2 = 0
