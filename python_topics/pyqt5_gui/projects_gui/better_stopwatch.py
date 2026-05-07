@@ -4,6 +4,7 @@
 import sys
 from  PyQt5.QtWidgets import QMainWindow , QLabel , QWidget , QVBoxLayout , QHBoxLayout , QPushButton , QApplication
 from PyQt5.QtCore import QTime , QTimer , Qt 
+import json 
 
 class MainWidget(QWidget):
     def __init__(self):
@@ -18,9 +19,12 @@ class MainWidget(QWidget):
         self.total_pause_time = 0
         self.pause_start_time = None
         self.pause_time_label.setObjectName("pause_time_label")
-        self.flag_display.setObjectName("flag_display")
+        self.flag_display.setObjectName("bottom_display") # same name to history label too
         self.flags = []
+        self.filepath = "pyqt5_gui/projects_gui/better_stopwatch_history.json"
+        self.history_reader()
     def initui(self):
+        self.history_display = QLabel("Just checking if its right")
         self.flag_display = QLabel()
         self.time_display = QLabel("00:00:00.00")
         self.play_pause_button = QPushButton("▶")
@@ -31,6 +35,7 @@ class MainWidget(QWidget):
         self.flag_button.setDisabled(True)
         vbox = QVBoxLayout()
         hbox = QHBoxLayout()
+        hbox2 = QHBoxLayout()
         vbox.addWidget(self.time_display , alignment=(Qt.AlignCenter))
         vbox.addWidget(self.pause_time_label , alignment=(Qt.AlignCenter))
     
@@ -39,11 +44,14 @@ class MainWidget(QWidget):
         hbox.addWidget(self.play_pause_button)
         hbox.addWidget(self.flag_button)
         vbox.addLayout(hbox)
-        vbox.addWidget(self.flag_display)
+        hbox2.addWidget(self.flag_display)
+        hbox2.addWidget(self.history_display)
+        vbox.addLayout(hbox2)
         #designs
         self.reset_button.setFixedSize(130 , 130)
         self.play_pause_button.setFixedSize(130 , 130)
         self.flag_button.setFixedSize(130 , 130)
+        self.history_display.setObjectName("bottom_display")
         self.setStyleSheet(""" QWidget{background-color:        #1e1e2e;}                           
                            QPushButton{
                             font-size: 60px;
@@ -65,7 +73,7 @@ class MainWidget(QWidget):
                            QLabel#pause_time_label{
                         font-size: 20px
                            }
-                           QLabel#flag_display{
+                           QLabel#bottom_display{
                         font-size: 20px
                            }
                            """)
@@ -135,7 +143,9 @@ class MainWidget(QWidget):
                 current_text += (f"Flag {flag_num2:02} - {x} \n")
             self.flag_display.setText(current_text)
                 
-
+    def history_reader(self):
+        with open(self.filepath , "r") as file :
+            self.json_reader = json.load(file)
 
 
 def main():
