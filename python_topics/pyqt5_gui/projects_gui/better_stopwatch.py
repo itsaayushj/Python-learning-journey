@@ -22,9 +22,10 @@ class MainWidget(QWidget):
         self.flag_display.setObjectName("bottom_display") # same name to history label too
         self.flags = []
         self.filepath = "pyqt5_gui/projects_gui/better_stopwatch_history.json"
+        self.history = []
         self.history_reader()
     def initui(self):
-        self.history_display = QLabel("Just checking if its right")
+        self.history_display = QLabel()
         self.flag_display = QLabel()
         self.time_display = QLabel("00:00:00.00")
         self.play_pause_button = QPushButton("▶")
@@ -99,6 +100,10 @@ class MainWidget(QWidget):
             self.timer.stop()
             
     def reset_button_slot(self):
+        reset_time = self.time_display.text()
+        self.history.append(reset_time)
+        if len(self.history) > 5 :
+            self.history.pop(0)
         self.reset_button.setDisabled(True)
         self.play_pause_button.setText("▶")
         self.time = QTime(0 , 0, 0, 0)
@@ -109,6 +114,9 @@ class MainWidget(QWidget):
         self.flag_button.setEnabled(False)
         self.flags.clear()
         self.flag_display.setText("")
+        self.history_writer()
+        self.history_reader() 
+        
     def time_format(self , time):
         hours = time.hour()
         minutes = time.minute()
@@ -144,9 +152,27 @@ class MainWidget(QWidget):
             self.flag_display.setText(current_text)
                 
     def history_reader(self):
-        with open(self.filepath , "r") as file :
-            self.json_reader = json.load(file)
+        try:
+            with open(self.filepath , "r") as file :
+                self.history = json.load(file)
+                if not self.history :
+                    self.history_display.setText("There is nothing to show here!")
+                else:
+                    current_text = ""
+                    history_timer = 0
+                    for time in self.history:
+                        history_timer += 1
+                        current_text += (f"Timer {history_timer} - {time} \n")
+                    self.history_display.setText(current_text)
 
+        except FileNotFoundError :
+            with open(self.filepath , "w") as file:
+                json.dump(self.history , file , indent=4)
+            self.history_display.setText("There is nothing to show here!")
+
+    def history_writer(self):
+        with open(self.filepath , "w") as file:
+            json.dump(self.history , file , indent=4)
 
 def main():
     app = QApplication(sys.argv)
