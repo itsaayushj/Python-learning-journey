@@ -1,6 +1,6 @@
 # How to connect to an API using python 
 import requests
-base_url = "https://pokeapi.co/api/v2/"
+base_url = "https://pokeapi.co/api/v2"
 
 def get_pokemon(name):
     main_url = f"{base_url}/pokemon/{name}"
@@ -14,8 +14,8 @@ def get_pokemon(name):
     return pokemon_data
 def main() : 
     user_input = input("Enter your favourate pokemon!:").lower()
+    pokemon_data = get_pokemon(user_input)
     if pokemon_data:
-        pokemon_data = get_pokemon(user_input)
         print(f"Name = {pokemon_data.get('name').capitalize()}")
         print(f"ID = {pokemon_data.get('id')}")
         print(f"Weight = {pokemon_data.get('weight')}")
