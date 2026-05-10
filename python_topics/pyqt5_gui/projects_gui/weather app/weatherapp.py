@@ -62,17 +62,49 @@ class WeatherApp(QWidget):
         self.get_weather_button.clicked.connect(self.get_weather_slot)
 
     def get_weather_slot(self):
-        api_key = "4c999ddef7a94055f039de3290859d9c"
-        city = self.city_input.text()
-        url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
+          api_key = "4c999ddef7a94055f039de3290859d9c"
+          city = self.city_input.text()
+          url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
 
-        response = requests.get(url)
-        data = response.json() 
-        print(data)
+          try:
+               response = requests.get(url)
+               data = response.json() 
+               response.raise_for_status() # It checks the code and raise error if its 400-500
+               if data["cod"] == 200 :
+                    self.display_weather(data)
+          except requests.exceptions.HTTPError as HTTPError:   #HTTPERROR when code is 400-500
+               match response.status_code : 
+                    case 400 : 
+                         self.display_errors("Bad request: \nPlease check your input!")
+                    case 401 : 
+                         self.display_errors("Unauthorised: \nInvalid API Key!")
+                    case 403 : 
+                         self.display_errors("Forbidden: \nAccess denied")
+                    case 404 : 
+                         self.display_errors("Not Found: \nCity not found!")
+                    case 500 : 
+                         self.display_errors("Internal server error: \nPlease try again later!")
+                    case 502 : 
+                         self.display_errors("Bad gateway: \nInvalid response from the server")
+                    case 503 : 
+                         self.display_errors("Service unavailable: \nServer is down")
+                    case 504 : 
+                         self.display_errors("Gateway timeout: \nNO response from the server")
+                    case _: # everything else
+                         self.display_errors(HTTPError)
+          except requests.exceptions.ConnectionError:
+               self.display_errors("Connection Error \nPlease check your internet!")
+          except requests.exceptions.Timeout:
+               self.display_errors("Timeout Error \nThe request timed out")
+          except requests.exceptions.TooManyRedirects:
+               self.display_errors("Too many Redirects\nCheck the URL")
+          except requests.exceptions.RequestException() as RequestException:
+               self.display_errors(f"Request Exception:\n{RequestException}")
     def display_errors(self , message):
-        pass
-    def display_weather(self):
-        pass
+        self.temperature_label.setStyleSheet("font-size: 30px;")
+        self.temperature_label.setText(message)
+    def display_weather(self , data):
+        print(data)
 
 def main():
     app = QApplication(sys.argv)
