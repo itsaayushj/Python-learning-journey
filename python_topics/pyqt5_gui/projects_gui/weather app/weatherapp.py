@@ -98,7 +98,7 @@ class WeatherApp(QWidget):
                self.display_errors("Timeout Error \nThe request timed out")
           except requests.exceptions.TooManyRedirects:
                self.display_errors("Too many Redirects\nCheck the URL")
-          except requests.exceptions.RequestException() as RequestException:
+          except requests.exceptions.RequestException as RequestException:
                self.display_errors(f"Request Exception:\n{RequestException}")
     def display_errors(self , message):
         self.temperature_label.setStyleSheet("font-size: 30px;")
@@ -113,21 +113,20 @@ class WeatherApp(QWidget):
         self.temperature_label.setText(f"{temp_celcius:.0f}°c")
         description = data["weather"][0]["description"]
         self.description_label.setText(description)
-        print(data)
         weather_id = data["weather"][0]["id"]
         self.emoji_label.setText(self.weather_emoji(weather_id))
 
     @staticmethod
     def weather_emoji(weather_id):
-          if 200 <= weather_id >= 232 : 
+          if 200 <= weather_id <= 232 : 
               return "⛈️"
-          elif 300 <= weather_id >= 321 :
+          elif 300 <= weather_id <= 321 :
               return "☔"
-          elif 500 <= weather_id >= 531 :
+          elif 500 <= weather_id <= 531 :
                return "🌧️"
-          elif 600 <= weather_id >= 622 :
+          elif 600 <= weather_id <= 622 :
                return "❄️"
-          elif 701 <= weather_id >= 741 :
+          elif 701 <= weather_id <= 741 :
                return "🌪️"
           elif weather_id == 762 :
                return "🌋"
