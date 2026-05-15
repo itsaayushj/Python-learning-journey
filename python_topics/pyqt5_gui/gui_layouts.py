@@ -31,7 +31,7 @@ class MainWindow(QMainWindow) :
         grid = QGridLayout() # calling the constructor
         central_widget.setLayout(grid) # SETTING THE LAYOUT
         grid.addWidget(label1 , 0 , 0) # for v and h layout no numbers are needed but order matters 
-        grid.addWidget(label2 , 0 , 1) # the numbers are used as tables (rows , cols)
+        grid.addWidget(label2 , 0 , 1) # the numbers are used as tables (rows , cols , rowspan , colspan)
         grid.addWidget(label3 , 1, 0)
         grid.addWidget(label4 , 1 , 1)
         grid.addWidget(label5 , 2 , 0)
