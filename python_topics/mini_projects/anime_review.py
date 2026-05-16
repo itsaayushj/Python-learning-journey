@@ -8,7 +8,7 @@
 # print(data['data'][0]['title'])
 import requests
 import sys
-from PyQt5.QtWidgets import QMainWindow , QApplication , QWidget , QVBoxLayout , QHBoxLayout , QGridLayout , QLayout , QLineEdit , QLabel , QPushButton
+from PyQt5.QtWidgets import QMainWindow , QApplication , QWidget , QVBoxLayout , QHBoxLayout , QGridLayout , QLayout , QLineEdit , QLabel , QPushButton , QTextEdit
 from PyQt5.QtGui import QPixmap 
 from PyQt5.QtCore import Qt
 
@@ -35,7 +35,11 @@ class MainWindow(QMainWindow):
         self.anime_episodes_output = QLabel()
         self.anime_year_released_output = QLabel()
         self.anime_status_output = QLabel()
-        
+        self.anime_synopsis = QTextEdit()
+        self.anime_synopsis.setReadOnly(True)
+        self.widget_group = [self.anime_poster , self.anime_name , self.anime_name_output , self.anime_rating , self.anime_rating_output , self.anime_episodes , self.anime_episodes_output , self.anime_year_released , self.anime_year_released_output , self.anime_status , self.anime_status_output , self.anime_synopsis]
+        for widget in self.widget_group : 
+            widget.hide()
         vbox_main = QVBoxLayout()
         gridlayout1 = QGridLayout()
         hbox1 = QHBoxLayout()
@@ -56,37 +60,47 @@ class MainWindow(QMainWindow):
         gridlayout1.addWidget(self.anime_status_output , 4 , 2 )
         self.setCentralWidget(central_widget)
         vbox_main.addLayout(gridlayout1)
+        vbox_main.addWidget(self.anime_synopsis)
         central_widget.setLayout(vbox_main)
         
         self.anime_poster.setMinimumSize(450 , 450)
         self.search_button.clicked.connect(self.search_button_slot)
     
     def search_button_slot(self):
-        base_url = "https://api.jikan.moe/v4/"
-        endpoint = "anime?q="
-        query = self.user_input_lineedit.text()
-        response = requests.get(f"{base_url}{endpoint}{query}")
-        data = response.json()
+        try:
+            base_url = "https://api.jikan.moe/v4/"
+            endpoint = "anime?q="
+            query = self.user_input_lineedit.text()
+            response = requests.get(f"{base_url}{endpoint}{query}")
+            data = response.json()
+            self.display_details(data)
+        except :
+            pass 
+    def display_details(self , data):
         anime_details = data['data'][0] # for ease
         self.anime_name_output.setText(anime_details['title'])
         self.anime_rating_output.setText(str(anime_details['score'])) # settext only accept strings apparently
         self.anime_episodes_output.setText(str(anime_details['episodes']))
         self.anime_year_released_output.setText(anime_details['aired']['string'])
         self.anime_status_output.setText(anime_details['status'])
-
+        
+        self.anime_synopsis.setText(anime_details['synopsis'])
         # genetating poster 
         pixmap = QPixmap()
         image_url = anime_details['images']['jpg']['large_image_url']
         image_data = requests.get(image_url).content #.content gets raw binary data of the image otherwise we get   status code , headers etc 
         pixmap.loadFromData(image_data)
 
-        pixmap.scaled(
+        pixmap = pixmap.scaled(
             450 ,
               450 ,
             Qt.KeepAspectRatio,
             Qt.SmoothTransformation
         )
-        self.anime_poster.setPixmap(pixmap)S
+        self.anime_poster.setPixmap(pixmap)
+        for widget in self.widget_group : 
+            widget.show()
+
 
 def main(): 
     app = QApplication(sys.argv)
