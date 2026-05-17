@@ -1,17 +1,8 @@
-# import requests
-
-# base_url = "https://api.jikan.moe/v4/"
-# end_url = "anime?q="
-# searched_anime = input("Enter the anime you are searching for: ")
-# response = requests.get(f"{base_url}{end_url}{searched_anime}")
-# data = response.json()
-# print(data['data'][0]['title'])
 import requests
 import sys
-from PyQt5.QtWidgets import QMainWindow , QApplication , QWidget , QVBoxLayout , QHBoxLayout , QGridLayout , QLayout , QLineEdit , QLabel , QPushButton , QTextEdit
+from PyQt5.QtWidgets import QMainWindow , QApplication , QWidget , QVBoxLayout , QHBoxLayout , QGridLayout , QLayout , QLineEdit , QLabel , QPushButton , QTextEdit  
 from PyQt5.QtGui import QPixmap 
 from PyQt5.QtCore import Qt
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -19,10 +10,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("AnimeDB")
         self.resize(1100 , 600)
         self.initui()
+        self.ui_design()
     def initui(self):
         self.user_input_lineedit = QLineEdit()
         self.user_input_lineedit.setPlaceholderText("Enter your anime name")
-        self.search_button = QPushButton("Search")
+        self.search_button = QPushButton("🔍Search")
         self.search_button.setDefault(True)
         self.anime_poster = QLabel()
         self.anime_name = QLabel("Name:")
@@ -37,6 +29,7 @@ class MainWindow(QMainWindow):
         self.anime_status_output = QLabel()
         self.anime_synopsis = QTextEdit()
         self.anime_synopsis.setReadOnly(True)
+        self.user_input_lineedit.returnPressed.connect(self.search_button_slot) # runs search button slot if user press enter while typing on search bar
         self.widget_group = [self.anime_poster , self.anime_name , self.anime_name_output , self.anime_rating , self.anime_rating_output , self.anime_episodes , self.anime_episodes_output , self.anime_year_released , self.anime_year_released_output , self.anime_status , self.anime_status_output , self.anime_synopsis]
         for widget in self.widget_group : 
             widget.hide()
@@ -59,29 +52,34 @@ class MainWindow(QMainWindow):
         gridlayout1.addWidget(self.anime_year_released_output , 3 , 2 )
         gridlayout1.addWidget(self.anime_status , 4 , 1 )
         gridlayout1.addWidget(self.anime_status_output , 4 , 2 )
+        gridlayout1.setHorizontalSpacing(20)
+        gridlayout1.setVerticalSpacing(15)
         self.setCentralWidget(central_widget)
         vbox_main.addLayout(gridlayout1)
         vbox_main.addWidget(self.anime_synopsis)
         vbox_main.addWidget(self.initial_run_label , alignment=(Qt.AlignCenter))
         central_widget.setLayout(vbox_main)
         
-        self.anime_poster.setMinimumSize(450 , 450)
+        self.anime_poster.setMinimumSize(350 , 350)
         self.search_button.clicked.connect(self.search_button_slot)
     
     def search_button_slot(self):
         try:
             base_url = "https://api.jikan.moe/v4/"
             endpoint = "anime?q="
-            query = self.user_input_lineedit.text()
-            response = requests.get(f"{base_url}{endpoint}{query}" , timeout=10) # error after 10 seconds
-            response.raise_for_status() # raises the error (400-500)
-            self.data = response.json()
-            # print(self.data) 
-            if not self.data.get('data') :
-                self.display_errors("Anime Not found !")
+            query = self.user_input_lineedit.text().strip()
+            if not query : 
+                self.initial_run_label.setText("You Typed Nothing :(")
             else : 
-                self.display_details()
-                self.initial_run_label.hide()
+                response = requests.get(f"{base_url}{endpoint}{query}" , timeout=10) # error after 10 seconds
+                response.raise_for_status() # raises the error (400-500)
+                self.data = response.json()
+                # print(self.data) 
+                if not self.data.get('data') :
+                    self.display_errors("Anime Not Found :(")
+                else : 
+                    self.display_details()
+                    self.initial_run_label.hide()
         except requests.exceptions.HTTPError : # error 400s-500s
          
             match response.status_code:
@@ -116,17 +114,18 @@ class MainWindow(QMainWindow):
         self.anime_episodes_output.setText(str(anime_details['episodes']))
         self.anime_year_released_output.setText(anime_details['aired']['string'])
         self.anime_status_output.setText(anime_details['status'])
-        
-        self.anime_synopsis.setText(anime_details['synopsis'])
+        self.anime_name_output.setWordWrap(True)
+        self.anime_year_released_output.setWordWrap(True)
+        self.anime_synopsis.setText(anime_details['synopsis'] or "No synopsis exists for this anime!") # if there is no synopsis it use fallback text (prewrote text) 
         # genetating poster 
         pixmap = QPixmap()
         image_url = anime_details['images']['jpg']['large_image_url']
-        image_data = requests.get(image_url).content #.content gets raw binary data of the image otherwise we get   status code , headers etc 
+        image_data = requests.get(image_url , timeout=10).content #.content gets raw binary data of the image otherwise we get   status code , headers etc 
         pixmap.loadFromData(image_data)
 
         pixmap = pixmap.scaled(
-            450 ,
-              450 ,
+            350 ,
+              350 ,
             Qt.KeepAspectRatio,
             Qt.SmoothTransformation
         )
@@ -139,6 +138,51 @@ class MainWindow(QMainWindow):
         self.initial_run_label.setStyleSheet("font-size: 50px")
         self.initial_run_label.setText(message)
         self.initial_run_label.show()
+    def ui_design(self): 
+        placeholder_label_group = [self.anime_name , self.anime_rating , self.anime_episodes , self.anime_year_released , self.anime_status]
+        
+        for widget in placeholder_label_group : 
+            widget.setObjectName("placeholder_labels")
+        
+        output_label_group = [self.anime_name_output , self.anime_rating_output , self.anime_episodes_output , self.anime_year_released_output , self.anime_status_output]
+
+        for widget in output_label_group : 
+            widget.setObjectName("output_labels")
+
+        self.initial_run_label.setStyleSheet("font-size: 50px")
+        self.setStyleSheet(""" QWidget{
+                                 background-color: #0A1931;
+                                color: #F6FAFD;
+                                font-family: Inter;
+                                        }
+                                QPushButton{
+                                    background-color: #4A7FA7;
+                                    font-size: 20px;
+                                    padding: 10px 30px;  
+                                    margin: 20px;
+                                    border: 3px solid;
+                                    border-radius: 15px;
+                                        }
+                                QPushButton:hover{
+                                        background-color: #1A3D63;
+                                        }
+                           QLineEdit{
+                                border: 3px solid;
+                                border-radius: 20px;
+                                font-size: 30px;
+                           }
+                           QLabel#placeholder_labels{
+                                font-size: 25px;
+                                font-weight: bold;
+                           }
+                           QLabel#output_labels{
+                                font-size: 25px;
+                                font-weight: bold;
+                           }
+                           QTextEdit{
+                            padding: 10px;
+                           }
+                           """)
 
 def main(): 
     app = QApplication(sys.argv)
