@@ -1,2 +1,4 @@
 python_topics/.venv/
 python_topics/.idea/
+/dist
+/build
