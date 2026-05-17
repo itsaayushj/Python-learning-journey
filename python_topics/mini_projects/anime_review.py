@@ -40,6 +40,7 @@ class MainWindow(QMainWindow):
         self.widget_group = [self.anime_poster , self.anime_name , self.anime_name_output , self.anime_rating , self.anime_rating_output , self.anime_episodes , self.anime_episodes_output , self.anime_year_released , self.anime_year_released_output , self.anime_status , self.anime_status_output , self.anime_synopsis]
         for widget in self.widget_group : 
             widget.hide()
+        self.initial_run_label = QLabel("There is nothing to show here!")
         vbox_main = QVBoxLayout()
         gridlayout1 = QGridLayout()
         hbox1 = QHBoxLayout()
@@ -61,6 +62,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         vbox_main.addLayout(gridlayout1)
         vbox_main.addWidget(self.anime_synopsis)
+        vbox_main.addWidget(self.initial_run_label , alignment=(Qt.AlignCenter))
         central_widget.setLayout(vbox_main)
         
         self.anime_poster.setMinimumSize(450 , 450)
@@ -71,13 +73,44 @@ class MainWindow(QMainWindow):
             base_url = "https://api.jikan.moe/v4/"
             endpoint = "anime?q="
             query = self.user_input_lineedit.text()
-            response = requests.get(f"{base_url}{endpoint}{query}")
-            data = response.json()
-            self.display_details(data)
-        except :
-            pass 
-    def display_details(self , data):
-        anime_details = data['data'][0] # for ease
+            response = requests.get(f"{base_url}{endpoint}{query}" , timeout=10) # error after 10 seconds
+            response.raise_for_status() # raises the error (400-500)
+            self.data = response.json()
+            # print(self.data) 
+            if not self.data.get('data') :
+                self.display_errors("Anime Not found !")
+            else : 
+                self.display_details()
+                self.initial_run_label.hide()
+        except requests.exceptions.HTTPError : # error 400s-500s
+         
+            match response.status_code:
+                case 400 : 
+                    self.display_errors(f"BadRequestException\n")
+                case 404 : 
+                    self.display_errors(f"BadRequestException\n")
+                case 405 : 
+                    self.display_errors(f"BadRequestException\n")
+                case 429 : 
+                    self.display_errors(f"RateLimitException\n")
+                case 500 : 
+                    self.display_errors(f"UpstreamException\n")
+                case 503 : 
+                    self.display_errors(f"ServiceUnavailableException\n")
+        except requests.exceptions.ConnectionError : 
+            
+            self.display_errors("Connection Error\nPlease check your internet connection")
+        except requests.exceptions.Timeout : 
+            
+            self.display_errors("Connection Timeout\nPlease try again later")
+        except requests.exceptions.TooManyRedirects : 
+            
+            self.display_errors("Too many redirects\nCheck the URL")
+        except requests.exceptions.RequestException as RequestException : 
+            
+            self.display_errors(f"RequestException\n{RequestException}")
+    def display_details(self):
+        anime_details = self.data['data'][0] # for ease
         self.anime_name_output.setText(anime_details['title'])
         self.anime_rating_output.setText(str(anime_details['score'])) # settext only accept strings apparently
         self.anime_episodes_output.setText(str(anime_details['episodes']))
@@ -100,7 +133,12 @@ class MainWindow(QMainWindow):
         self.anime_poster.setPixmap(pixmap)
         for widget in self.widget_group : 
             widget.show()
-
+    def display_errors(self , message) : 
+        for widget in self.widget_group : 
+            widget.hide()
+        self.initial_run_label.setStyleSheet("font-size: 50px")
+        self.initial_run_label.setText(message)
+        self.initial_run_label.show()
 
 def main(): 
     app = QApplication(sys.argv)
